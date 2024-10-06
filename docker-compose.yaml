@@ -1,0 +1,30 @@
+services:
+  discord_clone_db:
+    image: mariadb:latest
+    container_name: discord_mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: discord_clone
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # discord_clone_client_dev:
+  #   container_name: discord_client_dev
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #   env_file:
+  #     - .env
+
+volumes:
+  mariadb_data:

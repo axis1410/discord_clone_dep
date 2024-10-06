@@ -1,0 +1,49 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json .
+COPY pnpm-lock.yaml .
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+COPY . .
+
+RUN pnpm install
+
+EXPOSE 3000
+
+CMD ["pnpm", "run", "dev"]
+
+
+# FROM node:20-alpine
+
+# # Set working directory
+# WORKDIR /app
+
+# # Copy package files
+# COPY package.json .
+# COPY pnpm-lock.yaml .
+
+# # Install corepack and set up pnpm
+# ENV PNPM_HOME="/pnpm"
+# ENV PATH="$PNPM_HOME:$PATH"
+# RUN corepack enable
+
+# # Copy the wait-for-it script
+# COPY scripts/wait-for-it.sh /usr/local/bin/wait-for-it
+# RUN chmod +x /usr/local/bin/wait-for-it
+
+# # Copy application code
+# COPY . .
+
+# # Install dependencies
+# RUN pnpm install
+
+# # Expose port
+# EXPOSE 3000
+
+# # Command to run with wait-for-it, then run Prisma setup and start application
+# CMD ["sh", "-c", "wait-for-it discord_mariadb:3306 -- pnpm run prisma:setup && pnpm run dev"]
