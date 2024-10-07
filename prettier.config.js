@@ -2,7 +2,7 @@ module.exports = {
   printWidth: 80,
   tabWidth: 2,
   trailingComma: "all",
-  singleQuite: false,
+  singleQuote: false,
   semi: true,
   importOrder: ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
   importOrderSeparation: true,
