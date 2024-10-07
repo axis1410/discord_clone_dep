@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,6 +33,8 @@ const initialModalFormSchema = z.object({
 
 export const InitialModal = () => {
 	const [isMounted, setIsMounted] = useState<boolean>(false);
+
+	const router = useRouter();
 
 	useEffect(() => {
 		setIsMounted(true);
@@ -47,7 +51,17 @@ export const InitialModal = () => {
 	const isLoading = form.formState.isSubmitting;
 
 	const onSubmit = async (values: z.infer<typeof initialModalFormSchema>) => {
-		console.log(values);
+		try {
+			const response = await axios.post(`/api/servers`, values);
+
+			console.log(response.data.message);
+
+			form.reset();
+			router.refresh();
+			window.location.reload();
+		} catch (error) {
+			console.error([`[ERROR InitialModal.tsx]: ${error}`]);
+		}
 	};
 
 	if (!isMounted) return null;
