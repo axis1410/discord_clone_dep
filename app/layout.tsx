@@ -6,6 +6,7 @@ import "@uploadthing/react/styles.css";
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const font = Open_Sans({ subsets: ["latin"] });
@@ -33,6 +34,7 @@ export default function RootLayout({
             <ModalProvider />
             {children}
           </ThemeProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
