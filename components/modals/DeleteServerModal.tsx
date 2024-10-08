@@ -12,6 +12,7 @@ import { useModal } from "@/hooks/useModalStore";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 
 export const DeleteServerModal = () => {
@@ -31,6 +32,7 @@ export const DeleteServerModal = () => {
       onClose();
       router.refresh();
       router.push("/");
+      toast("Server deleted");
     } catch (error) {
       console.error(`[DeleteServerModal.tsx onClick] ${error}`);
     } finally {

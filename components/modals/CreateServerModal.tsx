@@ -24,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const createServerModalFormSchema = z.object({
@@ -58,10 +59,9 @@ export const CreateServerModal = () => {
     try {
       const response = await axios.post(`/api/servers`, values);
 
-      console.log(response.data.message);
-
       handleClose();
       router.refresh();
+      toast("Server created");
     } catch (error) {
       console.error([`[ERROR CreateServerModal.tsx]: ${error}`]);
     }

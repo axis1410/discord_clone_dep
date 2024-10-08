@@ -21,7 +21,7 @@ import { useModal } from "@/hooks/useModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChannelType } from "@prisma/client";
 import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import qs from "query-string";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-const createChannelMoodalFormSchema = z.object({
+const editChannelModalFormSchema = z.object({
   name: z
     .string()
     .min(1, { message: "Channel name is required" })
@@ -45,29 +45,27 @@ const createChannelMoodalFormSchema = z.object({
   type: z.nativeEnum(ChannelType),
 });
 
-export const CreateChannelMoodal = () => {
+export const EditChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
-  const params = useParams();
 
-  const isModalOpen = isOpen && type === "createChannel";
-  const { channelType } = data;
+  const isModalOpen = isOpen && type === "editChannel";
+  const { channel, server } = data;
 
-  const form = useForm<z.infer<typeof createChannelMoodalFormSchema>>({
-    resolver: zodResolver(createChannelMoodalFormSchema),
+  const form = useForm<z.infer<typeof editChannelModalFormSchema>>({
+    resolver: zodResolver(editChannelModalFormSchema),
     defaultValues: {
-      name: "",
-      type: channelType || ChannelType.TEXT,
+      name: channel?.name || "",
+      type: channel?.type || ChannelType.TEXT,
     },
   });
 
   useEffect(() => {
-    if (channelType) {
-      form.setValue("type", channelType);
-    } else {
-      form.setValue("type", ChannelType.TEXT);
+    if (channel) {
+      form.setValue("name", channel.name);
+      form.setValue("type", channel.type);
     }
-  }, [channelType, form]);
+  }, [channel, form]);
 
   const isLoading = form.formState.isSubmitting;
 
@@ -77,24 +75,23 @@ export const CreateChannelMoodal = () => {
   };
 
   const onSubmit = async (
-    values: z.infer<typeof createChannelMoodalFormSchema>,
+    values: z.infer<typeof editChannelModalFormSchema>,
   ) => {
     try {
       const url = qs.stringifyUrl({
-        url: "/api/channels",
+        url: `/api/channels/${channel?.id}`,
         query: {
-          serverId: params?.serverId,
+          serverId: server?.id,
         },
       });
 
-      const response = await axios.post(url, values);
+      await axios.patch(url, values);
 
       handleClose();
       router.refresh();
-
-      toast("Channel created");
+      toast("Channel updated");
     } catch (error) {
-      console.error([`[ERROR CreateChannelMoodal.tsx]: ${error}`]);
+      console.error([`[ERROR EditChannelModal.tsx]: ${error}`]);
     }
   };
 
@@ -103,7 +100,7 @@ export const CreateChannelMoodal = () => {
       <DialogContent className="p-0 overflow-hidden text-black bg-white">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-2xl font-bold text-center">
-            Create Channel
+            Edit Channel
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>

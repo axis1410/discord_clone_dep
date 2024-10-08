@@ -11,30 +11,38 @@ import {
 import { useModal } from "@/hooks/useModalStore";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import qs from "query-string";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
-export const LeaveServerModal = () => {
+export const DeleteChannelModal = () => {
   const { onClose, isOpen, type, data } = useModal();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const isModalOpen = isOpen && type === "leaveServer";
-  const { server } = data;
+  const isModalOpen = isOpen && type === "deleteChannel";
+  const { server, channel } = data;
 
   const onClick = async () => {
     try {
       setLoading(true);
 
-      await axios.patch(`/api/servers/${server?.id}/leave`);
+      const url = qs.stringifyUrl({
+        url: `/api/channels/${channel?.id}`,
+        query: {
+          serverId: server?.id,
+        },
+      });
+
+      await axios.delete(url);
 
       onClose();
       router.refresh();
-      router.push("/");
-      toast(`Left server ${server?.name}`);
+      router.push(`/servers/${server?.id}`);
+      toast("Channel deleted");
     } catch (error) {
-      console.error(`[LeaveServerModal.tsx onClick] ${error}`);
+      console.error(`[DeleteChannelModal.tsx onClick] ${error}`);
     } finally {
       setLoading(false);
     }
@@ -45,14 +53,15 @@ export const LeaveServerModal = () => {
       <DialogContent className="p-0 overflow-hidden text-black bg-white">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-2xl font-bold text-center">
-            Leave Server
+            Delete Channel
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
-            Are you sure you want to leave{" "}
+            Are you sure you want to delete{" "}
             <span className="font-semibold text-indigo-500">
-              {server?.name}
+              #{channel?.name}
             </span>
-            ?
+            ?<br />
+            <span>This action cannot be undone.</span>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="bg-gray-100 px-6 py-4">
