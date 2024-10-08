@@ -17,7 +17,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export const InviteModal = () => {
-  const origon = useOrigin();
+  const origin = useOrigin();
   const { onOpen, onClose, isOpen, type, data } = useModal();
 
   const [copied, setCopied] = useState<boolean>(false);
