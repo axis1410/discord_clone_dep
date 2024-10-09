@@ -6,6 +6,7 @@ import "@uploadthing/react/styles.css";
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 
+import { SocketProvider } from "@/components/providers/SocketProvider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -25,16 +26,18 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={cn(font.className, `bg-white dark:bg-[#313338]`)}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-            storageKey="discord-theme"
-          >
-            <ModalProvider />
-            {children}
-          </ThemeProvider>
-          <Toaster />
+          <SocketProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem={false}
+              storageKey="discord-theme"
+            >
+              <ModalProvider />
+              {children}
+            </ThemeProvider>
+            <Toaster />
+          </SocketProvider>
         </body>
       </html>
     </ClerkProvider>
